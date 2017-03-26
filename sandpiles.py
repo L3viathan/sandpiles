@@ -3,12 +3,11 @@ Sandpile arithmetics.
 
 The Sandpile class is used to construct a sandpile grid.
 
-S2x2, S3x3, S4x4 is a virtual set that elements can be checked to be contained in.
-null2x2, null3x3, and null4x4 are the identity elements of the respective size.
+S is a virtual set that elements can be checked to be contained in.
 """
 from itertools import zip_longest
 
-__all__ = ['Sandpile', 'S2x2', 'S3x3', 'S4x4', 'null2x2', 'null3x3', 'null4x4']
+__all__ = ['Sandpile', 'S']
 
 class Sandpile(object):
     """A sandpile grid"""
@@ -18,7 +17,7 @@ class Sandpile(object):
     BL = '┗'
     BR = '┛'
     H = '━'
-    null_cache = None
+    null_cache = {}
     def __init__(self, *args, topple=True):
         """
         Initializes a sandpile grid from its arguments.
@@ -73,7 +72,7 @@ class Sandpile(object):
             if isinstance(other, list):
                 other = Sandpile(*other)
             else:
-                raise RuntimeError("Can't add sandpiles to other things.")
+                return NotImplemented
         elif len(self.data) != len(other.data) or self.num_of_cols != other.num_of_cols:
             raise RuntimeError("Can't add sandpiles with different dimensions.")
         def add(x, y):
@@ -117,19 +116,20 @@ class Sandpile(object):
             if isinstance(other, list):
                 other = Sandpile(*other)
             else:
-                raise RuntimeError("Can't compare sandpiles to other things.")
+                return NotImplemented
         for xr, yr in zip_longest(self.data, other.data):
             for xc, yc in zip_longest(xr, yr):
                 if xc != yc:
                     return False
         return True
 
-    def order(self, identity):
+    def order(self):
         """
-        Return the order of the sandpile grid, given the identity (null) element.
+        Return the order of the sandpile grid.
 
         This is the integer n such that self * n == identity.
         """
+        identity = self.get_null()
         x = self
         value = 1
         while True:
@@ -138,12 +138,13 @@ class Sandpile(object):
             value += 1
             x += self
 
-    def inverse(self, identity):
+    def inverse(self):
         """
-        Return the inverse of the sandpile grid, given the identity (null) element.
+        Return the inverse of the sandpile grid.
 
         This is the sandpile grid g such that g + self == identity.
         """
+        identity = self.get_null()
         x = self
         while True:
             y = x + self
@@ -151,20 +152,23 @@ class Sandpile(object):
                 return x
             x = y
 
-null4x4 = Sandpile([2,1,1,2], [1,0,0,1], [1,0,0,1], [2,1,1,2])
-null3x3 = Sandpile([2,1,2], [1,0,1], [2,1,2])
-null2x2 = Sandpile([2,2], [2,2])
+    def get_null(self):
+        dims = len(self.data), self.num_of_cols
+        if dims in Sandpile.null_cache:
+            return Sandpile.null_cache[dims]
+        else:
+            raise NotImplementedError(f"Unable to get the identity element for something of dimensions {dims}.")
+
+Sandpile.null_cache[4,4] = Sandpile([2,1,1,2], [1,0,0,1], [1,0,0,1], [2,1,1,2])
+Sandpile.null_cache[3,3] = Sandpile([2,1,2], [1,0,1], [2,1,2])
+Sandpile.null_cache[2,2] = Sandpile([2,2], [2,2])
 
 class SandpileSetS(object):
     """
     For a given identity, construct an object that, given an element x,
     returns True iff x + identity == x, i.e. if it is in S.
     """
-    def __init__(self, null):
-        self.null = null
     def __contains__(self, other):
-        return self.null + other == other
+        return other.get_null() + other == other
 
-S4x4 = SandpileSetS(null4x4)
-S3x3 = SandpileSetS(null3x3)
-S2x2 = SandpileSetS(null2x2)
+S = SandpileSetS()

@@ -7,21 +7,19 @@ This code implements sandpile arithmetics as seen in
 
 Construct a sandpile:
 
-    >>> from sandpiles import Sandpile, null3x3
+    >>> from sandpiles import Sandpile, S
     >>> Sandpile([9,9,9], [9,9,9], [9,9,9])
     Sandpile([1, 3, 1], [3, 1, 3], [1, 3, 1])
 
-Get the order and inverse. For this, you'll need to have the identity
-element, which is included for the 2x2, 3x3, or 4x4 grids.
+Get the order and inverse:
 
-    >>> Sandpile([9,9,9], [9,9,9], [9,9,9]).order(null3x3)
+    >>> Sandpile([9,9,9], [9,9,9], [9,9,9]).order()
     16
-    >>> Sandpile([9,9,9], [9,9,9], [9,9,9]).inverse(null3x3)
+    >>> Sandpile([9,9,9], [9,9,9], [9,9,9]).inverse()
     Sandpile([3, 2, 3], [2, 3, 2], [3, 2, 3])
 
 Test if an element is in S:
 
-    >>> from sandpiles import S3x3
     >>> Sandpile([9,9,9], [9,9,9], [9,9,9]) in S
     True
     >>> Sandpile([0,0,0], [0,0,0], [0,0,0]) in S
@@ -52,18 +50,17 @@ Inspect the toppling process:
     ┃ 2 2 0 ┃
     ┗━━━━━━━┛
 
-Get order frequencies of all elements in S (uses `nested_loop` from
-[toolib](https://github.com/L3viathan/toolib)):
+    Get order frequencies of all elements in S (uses `nested_loop` from
+    [toolib](https://github.com/L3viathan/toolib):
 
-    >>> from sandpiles import Sandpile, null3x3, S3x3
+    >>> from sandpiles import Sandpile, S
     >>> from collections import Counter
     >>> from toolib.tools import nested_loop
-    >>> orders = Counter()
     >>> for a,b,c,d,e,f,g,h,i in nested_loop(9, 4):
     ...     x = Sandpile([a,b,c],[d,e,f],[g,h,i])
-    ...     if x not in S3x3:
+    ...     if x not in S:
     ...         continue
-    ...     o = x.order(null3x3)
+    ...     o = x.order()
     ...     orders[o] += 1
     >>> orders
     Counter({224: 49152, 112: 36864, 56: 9216, 28: 2688, 32: 1024, 16: 768, 14: 336, 8: 192, 4: 56, 7: 48, 2: 7, 1: 1})
