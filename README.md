@@ -58,6 +58,7 @@ Get order frequencies of all elements in S (uses `nested_loop` from
     >>> from sandpiles import Sandpile, null3x3, S3x3
     >>> from collections import Counter
     >>> from toolib.tools import nested_loop
+    >>> orders = Counter()
     >>> for a,b,c,d,e,f,g,h,i in nested_loop(9, 4):
     ...     x = Sandpile([a,b,c],[d,e,f],[g,h,i])
     ...     if x not in S3x3:
