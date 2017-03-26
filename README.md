@@ -52,8 +52,8 @@ Inspect the toppling process:
     ┃ 2 2 0 ┃
     ┗━━━━━━━┛
 
-    Get order frequencies of all elements in S (uses `nested_loop` from
-    [toolib](https://github.com/L3viathan/toolib):
+Get order frequencies of all elements in S (uses `nested_loop` from
+[toolib](https://github.com/L3viathan/toolib):
 
     >>> from sandpiles import Sandpile, null3x3, S3x3
     >>> from collections import Counter
